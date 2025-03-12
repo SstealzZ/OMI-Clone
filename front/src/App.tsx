@@ -40,7 +40,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true); // On commence avec loading=true
   const [error, setError] = useState<string | null>(null);
   const [apiConnected, setApiConnected] = useState<boolean>(false);
-  const [debugMode, setDebugMode] = useState<boolean>(true); // Mode débogage activé par défaut
+  const [debugMode, setDebugMode] = useState<boolean>(false); // Mode débogage désactivé par défaut
   const [dbConfig, setDbConfig] = useState<any>(null);
   const [dbConfigOpen, setDbConfigOpen] = useState<boolean>(false);
   const [repairResult, setRepairResult] = useState<any>(null);
@@ -81,10 +81,13 @@ function App() {
         setDates(datesData);
         setApiConnected(true);
         
-        // Si des dates sont disponibles, sélectionner la première par défaut
+        // Si des dates sont disponibles, sélectionner la plus récente par défaut
         if (datesData.length > 0) {
-          console.log('App - Sélection de la première date:', datesData[0]);
-          setSelectedDate(datesData[0]);
+          // Trier les dates par ordre décroissant pour avoir la plus récente en premier
+          const sortedDates = [...datesData].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+          const mostRecentDate = sortedDates[0];
+          console.log('App - Sélection de la date la plus récente:', mostRecentDate);
+          setSelectedDate(mostRecentDate);
         } else {
           console.warn('App - Aucune date n\'a été récupérée');
         }
@@ -178,9 +181,11 @@ function App() {
         setDates(datesData);
         setApiConnected(true);
         
-        // Si des dates sont disponibles, sélectionner la première
+        // Si des dates sont disponibles, sélectionner la plus récente
         if (datesData.length > 0) {
-          setSelectedDate(datesData[0]);
+          // Trier les dates par ordre décroissant pour avoir la plus récente en premier
+          const sortedDates = [...datesData].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+          setSelectedDate(sortedDates[0]);
         }
         
         // Charger les types
@@ -244,44 +249,7 @@ function App() {
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Header />
         <Container sx={{ my: 4, flexGrow: 1 }}>
-          {/* Contrôle du mode de débogage et initialisation des données */}
-          <Paper elevation={1} sx={{ mb: 3, p: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <FormControlLabel
-                control={<Switch checked={debugMode} onChange={handleToggleDebug} />}
-                label="Mode débogage"
-              />
-              <Tooltip title="Afficher la configuration DB">
-                <IconButton color="info" onClick={handleGetDbConfig} size="small" sx={{ ml: 1 }}>
-                  <InfoIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-            <Stack direction="row" spacing={1}>
-              <Tooltip title="Réparer les messages (corriger la casse des champs)">
-                <Button
-                  variant="outlined"
-                  color="warning"
-                  startIcon={<BuildIcon />}
-                  onClick={handleRepairMessages}
-                  disabled={loading}
-                >
-                  Réparer Messages
-                </Button>
-              </Tooltip>
-              <Tooltip title="Initialiser les données de test">
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  startIcon={<RefreshIcon />}
-                  onClick={handleInitTestData}
-                  disabled={loading}
-                >
-                  Init Données Test
-                </Button>
-              </Tooltip>
-            </Stack>
-          </Paper>
+          {/* La barre supérieure a été supprimée */}
           
           {/* Message d'erreur de connexion API */}
           {!apiConnected && !loading && (
